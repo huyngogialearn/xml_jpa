@@ -22,4 +22,8 @@ public @interface IsColumn {
      * @return length of varchar of column (if the type of column is varchar)
      */
     int     length()    default 255;
+    /**
+     * @return type of field
+     */
+    Class sqlType() default void.class;
 }

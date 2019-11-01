@@ -7,8 +7,12 @@ import jpa.ultil.logic.QueryBuilderLogic;
 import jpa.resource.model.ColumnResource;
 import jpa.ultil.model.QueryBuider;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;import jpa.resource.model.CO;
+import java.util.List;
+import java.util.Map;
+
+import jpa.resource.model.CO;
 
 /**
  * The {@link COLogic} contains the methods processing the {@link } resource
@@ -47,5 +51,6 @@ public class COLogic {
         });
         return form;
     }
+
 
 }

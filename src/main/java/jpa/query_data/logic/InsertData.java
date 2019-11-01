@@ -83,13 +83,13 @@ public class InsertData<T> {
             //not found jpa.resource
             if(resource == null) throw new NotFoundResourceException(columnIds[i]);
             //coulmn is a foreign key
-            if(resource.getRelationship() != null) continue;;
+//            if(resource.getRelationship() != null) continue;;
             //if field is private modifier
             resource.getField().setAccessible(true);
             //format column -> `column1`
             columnNames.add(String.format("`%s`",resource.getSqlName()));
             //conver column value type to sql type
-            columnValues.add(typeConvert.convertSQLFormat(resource.getField().getType(),resource.getField().get(object)));
+            columnValues.add(typeConvert.convertSQLFormat(resource.getField().getType(),resource.getField().get(object),columnIds[i]));
         }
         //result -> INSERT INTO [TABLE_NAME] (`colmn1`, `column3`, `column4`,{COLUMN_NAME_KEY<,>}) VALUES ({COLUMN_VALUE<,>})
         //replace into parent-form
@@ -99,7 +99,6 @@ public class InsertData<T> {
         //result -> INSERT INTO table (`colmn1`, `column3`, `column4`,{COLUMN_NAME_KEY<,>}) VALUES (1, 3, 4{COLUMN_VALUE<,>})
         //process table name
         form = queryBuilderLogic.processQueryBuilderForm(form,new QueryBuider(QueryBuilderType.ONE,TABLE_NAME_KEY,String.format("`%s`",tableResource.getSqlName())));
-        System.out.println(queryBuilderLogic.cleanQueryBuilderForm(form));
         form= queryBuilderLogic.cleanQueryBuilderForm(form);
         System.out.println(form);
         Connection connection = SQLConfigurationLogic.getConnection(Hello.database);

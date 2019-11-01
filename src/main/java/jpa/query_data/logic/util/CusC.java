@@ -20,7 +20,7 @@ public class CusC extends C {
     public String getCondition() {
         TypeConvert convert = new TypeConvert();
         for (Object object : objects){
-            condition = condition.replace("?",convert.convertSQLFormat(object.getClass(),object));
+            condition = condition.replace("?",convert.convertSQLFormat(object.getClass(),object,-1));
         }
         return condition;
     }

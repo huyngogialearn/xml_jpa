@@ -49,7 +49,6 @@ public class DeleteData<T> {
         //result -> DELETE FROM tabl WHERE table.id = '1';
         //replace condition into parent form
         parentForm = queryBuilderLogic.processQueryBuilderForm(parentForm,new QueryBuider(QueryBuilderType.ONE,CONDITION_KEY,where.getCondition()));
-        System.out.println(queryBuilderLogic.cleanQueryBuilderForm(parentForm));
         parentForm = queryBuilderLogic.cleanQueryBuilderForm(parentForm);
         Connection connection = SQLConfigurationLogic.getConnection(Hello.database);
         if(connection != null) {

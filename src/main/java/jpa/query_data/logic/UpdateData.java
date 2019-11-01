@@ -73,13 +73,13 @@ public class UpdateData<T> {
             //not found jpa.resource
             if(resource == null) throw new NotFoundResourceException(columnIds[i]);
             //column is a foreign key
-            if(resource.getRelationship() != null) continue;;
+//            if(resource.getRelationship() != null) continue;;
             //if field is private modifier
             resource.getField().setAccessible(true);
             //format column -> `column1`
             columnName = String.format("`%s`",resource.getSqlName());
             //convert column value type to sql type
-            columnValue = typeConvert.convertSQLFormat(resource.getField().getType(),resource.getField().get(object));
+            columnValue = typeConvert.convertSQLFormat(resource.getField().getType(),resource.getField().get(object),columnIds[i]);
             //result -> `id` = 2
             //replace the values into sub-form
             subForm = queryBuilderLogic.processQueryBuilderForm(subForm,new QueryBuider[]{
@@ -96,9 +96,7 @@ public class UpdateData<T> {
         //result -> UPDATE table SET `id` = 2,{COLUMN_NAME_KEY_COLUMN_VALUE<,>} WHERE table.id = '1';
         //replace condition into parent form
         parentForm = queryBuilderLogic.processQueryBuilderForm(parentForm,new QueryBuider(QueryBuilderType.ONE,CONDITION_KEY,where.getCondition()));
-        System.out.println(queryBuilderLogic.cleanQueryBuilderForm(parentForm));
         parentForm = queryBuilderLogic.cleanQueryBuilderForm(parentForm);
-        System.out.println(parentForm);
         Connection connection = SQLConfigurationLogic.getConnection(Hello.database);
         if(connection != null) {
             Statement stmt = connection.createStatement();

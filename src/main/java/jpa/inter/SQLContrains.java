@@ -20,7 +20,22 @@ public interface SQLContrains {
     /**
      * The query creating a table.
      */
-    static final String TABLE_CREATE_QUERY ="CREATE TABLE [TABLE_NAME]({COLUMN_CREATE_SUB_QUERY<,>})";
+    static final String TABLE_CREATE_QUERY ="CREATE TABLE [TABLE_NAME]({COLUMN_CREATE_SUB_QUERY<,>});";
+
+    /**
+     * The query disabling foreign key checks
+     */
+    static final String DISABLE_FOREIGN_KEY_CHECKS ="SET FOREIGN_KEY_CHECKS = 0;";
+
+    /**
+     * The query enabling foreign key checks
+     */
+    static final String ENABLE_FOREIGN_KEY_CHECKS ="SET FOREIGN_KEY_CHECKS = 0;";
+
+    /**
+     * The query drop a table if exists
+     */
+    static final String DROP_TABLE_QUERY ="DROP TABLE IF EXISTS [TABLE_NAME];";
 
     /**
      * Name of a table.

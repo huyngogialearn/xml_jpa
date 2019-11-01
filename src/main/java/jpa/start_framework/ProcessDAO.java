@@ -80,6 +80,7 @@ public class ProcessDAO {
                         if(executeAnnotation.itMe(method)){
                             //void type
                             if(method.getReturnType().equals(void.class)){
+                                executeAnnotation.process(proxy,method,args);
                                 return null;
                             }else{
                                 //List<>

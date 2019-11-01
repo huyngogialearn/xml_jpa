@@ -3,6 +3,7 @@ package jpa.annotation_process.user_annotaiton.column;
 import jpa.e.QueryBuilderType;
 import jpa.exception.MySQLNotSupportException;
 import jpa.inter.CRUDColumnAnnotation;
+import jpa.resource.logic.COLogic;
 import jpa.resource.model.ColumnResource;
 import jpa.ultil.logic.QueryBuilderLogic;
 import jpa.ultil.logic.TypeConvert;
@@ -37,7 +38,8 @@ public class IsColumnProcess implements CRUDColumnAnnotation {
         //get -> id
         String columnName = (isColumn.name() == null || isColumn.name().equals("")) ? parentField.getName() : isColumn.name();
         //get -> int
-        String columnType = convert.convertJavaToSQLType(parentField.getType(), isColumn.length());
+        String columnType;
+        columnType= convert.convertJavaToSQLType((isColumn.sqlType().equals(void.class))?parentField.getType():isColumn.sqlType(), isColumn.length());
         //replace the values into the parent form
         return form = queryBuilderLogic.processQueryBuilderForm(form, new QueryBuider[]{
                 new QueryBuider(QueryBuilderType.ONE, COLUMN_NAME_KEY, columnName),
@@ -62,7 +64,7 @@ public class IsColumnProcess implements CRUDColumnAnnotation {
     public void setUpResource(ColumnResource columnResource) {
         TypeConvert convert = new TypeConvert();
         columnResource.setSqlName((isColumn.name() == null || isColumn.name().equals("")) ? parentField.getName() : isColumn.name());
-        columnResource.setSqlType(convert.convertJavaToSQLType(parentField.getType(), isColumn.length()));
+        columnResource.setSqlType(convert.convertJavaToSQLType((isColumn.sqlType().equals(void.class))?parentField.getType():isColumn.sqlType(), isColumn.length()));
     }
 
     @Override

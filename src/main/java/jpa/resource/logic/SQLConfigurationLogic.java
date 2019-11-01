@@ -63,7 +63,7 @@ public class SQLConfigurationLogic {
                 if(connection!= null && !connection.isClosed()) return connection;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            String connectionURL = resource.getUrl() + resource.getName();
+            String connectionURL = resource.getUrl() + resource.getName()+"?useSSL=false";
             connection = DriverManager.getConnection(connectionURL, resource.getUsername(),
                     resource.getPassword());
             return connection;

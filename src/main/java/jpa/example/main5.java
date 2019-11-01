@@ -113,7 +113,7 @@ public class main5 {
     }
     public static void writeCO(String form) throws IOException {
         final String dir = System.getProperty("user.dir");
-        System.out.println("current dir = " + dir);
+//        System.out.println("current dir = " + dir);
 //        FileWriter fw = new FileWriter(dir+"/src/main/java/jpa/resource/model/CO.java" ,true);
 //        fw.write(form);
 //        fw.close();

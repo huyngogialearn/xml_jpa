@@ -179,7 +179,6 @@ public class SelectData<T extends Object> {
         form = selectLogic.process(form,modeSelects);
         //clear query
         form = queryBuilderLogic.cleanQueryBuilderForm(form);
-        System.out.println(form);
         //get connection
         Connection connection = SQLConfigurationLogic.getConnection(Hello.database);
         if(connection != null){
@@ -221,7 +220,6 @@ public class SelectData<T extends Object> {
                         columnTmp.getField().set(resultObject,objectTmp);
                     }
                 }
-                System.out.println("Object: "+resultObject);
                 Ts.add((T)resultObject);
             }
         }

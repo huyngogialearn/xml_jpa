@@ -1,6 +1,5 @@
 package jpa;
 
-import com.mysql.jdbc.NotImplemented;
 import jdk.jshell.spi.ExecutionControl;
 import jpa.annotation_process.user_annotaiton.database.Database;
 import jpa.e.DatabaseStrategy;
@@ -27,7 +26,7 @@ public class Hello {
         ProcessDatabaseStrategy databaseStrategy = new ProcessDatabaseStrategy();
         if(database.strategy() == DatabaseStrategy.CREATE){
             try {
-                databaseStrategy.createStrategy();
+                databaseStrategy.createStrategy(root);
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
@@ -43,7 +42,5 @@ public class Hello {
             e.printStackTrace();
         }
     }
-    public static void main(String[] args){
-        Hello.run(Hello.class);
-    }
+
 }

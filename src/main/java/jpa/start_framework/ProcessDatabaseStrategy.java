@@ -1,14 +1,15 @@
 package jpa.start_framework;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import jpa.Hello;
 import jpa.annotation_process.register_annotation.RegisterProcess;
 import jpa.annotation_process.user_annotaiton.column.IsColumn;
 import jpa.annotation_process.user_annotaiton.column.IsColumnProcess;
+import jpa.annotation_process.user_annotaiton.database.DatabaseProcess;
 import jpa.annotation_process.user_annotaiton.query.DAO;
 import jpa.annotation_process.user_annotaiton.query.FillDAO;
 import jpa.annotation_process.user_annotaiton.query.SelectQuery;
 import jpa.annotation_process.user_annotaiton.table.IsTable;
+import jpa.annotation_process.user_annotaiton.table.IsTableProcess;
 import jpa.e.QueryBuilderType;
 import jpa.example.main;
 import jpa.exception.MySQLNotSupportException;
@@ -35,7 +36,7 @@ import java.util.List;
 import static jpa.inter.SQLContrains.*;
 
 public class ProcessDatabaseStrategy {
-    public void createStrategy() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, MySQLNotSupportException, SQLException {
+    public void createStrategy(Class root) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, MySQLNotSupportException, SQLException {
         //Processing Tools
         AnnotationUltil annotationUltil = new AnnotationUltil();
         QueryBuilderLogic queryBuilderLogic = new QueryBuilderLogic();
@@ -56,19 +57,20 @@ public class ProcessDatabaseStrategy {
 
         //classed annotated @IsTable
         //TODO Get all IsTable.class
-        Class[] isTableClasses = annotationUltil.scanAnnotations(IsTable.class, main.class);
+        Class[] isTableClasses = annotationUltil.scanAnnotations(IsTable.class, root);
         //CREATE TABLE [TABLE_NAME]({COLUMN_CREATE_SUB_QUERY<,>})
         //main form
-        String createForm = null, createColForm = null;
+        String createForm = null, createColForm = null, dropForm = null;
         List<String> createTableForms = new ArrayList<>();
 
 
         if (isTableClasses == null || isTableClasses.length == 0) {
             return;
         }
-
+        createTableForms.add(DISABLE_FOREIGN_KEY_CHECKS);
         for (Class isTableClass : isTableClasses) {
             createForm = TABLE_CREATE_QUERY;
+            dropForm = DROP_TABLE_QUERY;
             registerProcessTmp = isTableClass.getAnnotation(IsTable.class).annotationType().getAnnotation(RegisterProcess.class);
             crudTableAnnotationClassTmp = (Class<CRUDTableAnnotation>) registerProcessTmp.process_class();
             //create CRUDTableAnnotation object
@@ -78,6 +80,8 @@ public class ProcessDatabaseStrategy {
             crudTableAnnotationTmp.setAnnotation(new Object[]{isTableClass.getAnnotation(IsTable.class)});
             //fill needed data into form that create table
             createForm = crudTableAnnotationTmp.create(createForm);
+            //drop table
+            dropForm = crudTableAnnotationTmp.delete(dropForm);
             for (Field isTaClField : isTableClass.getDeclaredFields()) {
                 createColForm = COLUMN_CREATE_SUB_QUERY;
                 for (Annotation isTaClFeAnnotation : isTaClField.getAnnotations()) {
@@ -99,8 +103,11 @@ public class ProcessDatabaseStrategy {
                 }
                 createForm = queryBuilderLogic.processQueryBuilderForm(createForm, new QueryBuider(QueryBuilderType.COMMA, COLUMN_CREATE_SUB_QUERY_KEY, queryBuilderLogic.cleanQueryBuilderForm(createColForm)));
             }
+            createTableForms.add(queryBuilderLogic.cleanQueryBuilderForm(dropForm));
             createTableForms.add(queryBuilderLogic.cleanQueryBuilderForm(createForm));
         }
+        createTableForms.add(ENABLE_FOREIGN_KEY_CHECKS);
+
         //get connection
         Connection connection = SQLConfigurationLogic.getConnection(Hello.database);
         if (connection == null) return;
@@ -120,6 +127,7 @@ public class ProcessDatabaseStrategy {
                 break;
             }
         }
+        SQLConfigurationLogic.closeConnection();
 
     }
 }

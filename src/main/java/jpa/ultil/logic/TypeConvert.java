@@ -1,6 +1,9 @@
 package jpa.ultil.logic;
 
 import jpa.exception.MySQLNotSupportException;
+import jpa.query_data.model.Relationship;
+import jpa.resource.model.CO;
+import jpa.resource.model.ColumnResource;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -35,9 +38,10 @@ public class TypeConvert {
         if(clazz.equals(Timestamp.class)){
             return "timestamp";
         }
-        return "int";
+        throw new MySQLNotSupportException();
     }
     public String convertSQLTypeToJava(Class clazz,String  length) throws MySQLNotSupportException {
+
         if(clazz.equals(String.class)){
             return "varchar("+length+")";
         }
@@ -67,10 +71,9 @@ public class TypeConvert {
         }
         return "int";
     }
-    public String convertSQLFormat(Class clazz,Object value) throws MySQLNotSupportException {
-        System.out.println(clazz);
+    public String convertSQLFormat(Class clazz,Object value,int ids) throws MySQLNotSupportException {
         if(clazz.equals(String.class)){
-            if(value == null) return "";
+            if(value == null) return "null";
             return "'"+value+"'";
         }
         if(clazz.equals(Long.class)||clazz.equals(long.class)||
@@ -80,14 +83,27 @@ public class TypeConvert {
                 clazz.equals(Double.class)||clazz.equals(double.class)
 
         ){
-            if(value == null) return "0";
+            if(value == null) return "0"; else return value+"";
         }
         if(clazz.equals(Date.class)||clazz.equals(Time.class)||clazz.equals(Timestamp.class)){
             if(value == null) return "null";
             return "'"+value.toString()+"'";
 
         }
-        return value+"";
-//        throw new MySQLNotSupportException(clazz+" is not supported, please change to other type");
+        if(ids < 0 ) throw new MySQLNotSupportException(clazz+" is not supported, please change to other type");
+        ColumnResource columnResourceTmp = CO.id.get(ids);
+        if(columnResourceTmp.getRelationship() != null){
+            Relationship relationshipTmp = columnResourceTmp.getRelationship();
+            columnResourceTmp=CO.id.get(relationshipTmp.getReFr());
+            try {
+                columnResourceTmp.getField().setAccessible(true);
+
+                return convertSQLFormat(columnResourceTmp.getField().getType(),(value == null)?value:columnResourceTmp.getField().get(value),-1);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+        }
+        throw new MySQLNotSupportException(clazz+" is not supported, please change to other type");
     }
 }
