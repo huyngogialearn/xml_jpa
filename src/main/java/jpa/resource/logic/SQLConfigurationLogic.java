@@ -1,8 +1,6 @@
 package jpa.resource.logic;
 
 import jpa.Hello;
-import jpa.e.DatabaseStrategy;
-import jpa.e.SQLType;
 import jpa.resource.model.SQLConfigurationResource;
 
 import java.sql.Connection;
